@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import FormView
 from .forms import PatientRegisterForm
 from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView, LogoutView
 
 
 class Register(FormView):
@@ -18,3 +19,7 @@ class Register(FormView):
 			login(self.request, user)
 		return super().form_valid(form)
 
+
+class Login(LoginView):
+	template_name = 'registration/login.html'
+	success_url = '/'
