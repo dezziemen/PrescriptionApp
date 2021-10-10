@@ -1,9 +1,15 @@
 from django.http import HttpResponse
-from django.views.generic import ListView, View, UpdateView
+from django.views.generic import (
+	View,
+	ListView,
+	FormView,
+	UpdateView,
+	DeleteView
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from Accounts.models import CustomUser
-from Accounts.forms import CustomUserChangeForm
+from .forms import CreateCustomUserForm
 
 
 class Home(LoginRequiredMixin, View):
@@ -83,12 +89,35 @@ class EditUser(UpdateView):
 	fields = ['user_type', 'email', 'full_name', 'phone_number', 'address', ]
 	success_url = '/'
 
+	def get(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type != 'admin':
+				print('edit page: user is not admin')
+				return redirect('home')
+		return super().get(request, *args, **kwargs)
+
+
+class CreateCustomUser(FormView):
+	template_name = 'admin/create_user.html'
+	form_class = CreateCustomUserForm
+	success_url = '/home/admin/'
+
 	def dispatch(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
 			if request.user.user_type == 'admin':
-				print('edit page: user is admin')
 				return self.get(request, *args, **kwargs)
 			else:
-				print('edit page: user is not admin')
-				return self.get(request, *args, **kwargs)
-		return self.get(request, *args, **kwargs)
+				return redirect('home')
+		return redirect('Accounts:login')
+
+	def form_valid(self, form):
+		if form.is_valid():
+			user = form.save(commit=False)
+			user.email = form.cleaned_data.get('email')
+			form.save()
+		return super().form_valid(form)
+
+
+class DeleteUser(DeleteView):
+	model = CustomUser
+	success_url = '/'
