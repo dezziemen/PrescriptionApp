@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block home_button %}
+    <form action="{% url 'Accounts:register' %}" method="GET">
+        <button type="submit" class="btn btn-primary">
+            Register
+        </button>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Login Page</h1>
+        <form class="site-form" action="{% url 'Accounts:login' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ form.errors }}
+            {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+            <input type="submit" value="Login">
+        </form>
+    </div>
+{% endblock %}
