@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.views.generic import (
 	View,
+	TemplateView,
 	ListView,
 	FormView,
 	UpdateView,
@@ -19,6 +20,13 @@ class Home(LoginRequiredMixin, View):
 		if request.user.is_authenticated:
 			if request.user.user_type == 'admin':
 				return redirect('admin_home')
+			elif request.user.user_type == 'patient':
+				return redirect('patient_home')
+			elif request.user.user_type == 'pharmacist':
+				return redirect('pharmacist_home')
+			elif request.user.user_type == 'doctor':
+				return redirect('doctor_home')
+			return redirect('Accounts:login')
 		else:
 			return redirect('Accounts:login')
 
@@ -126,3 +134,58 @@ class CreateCustomUser(FormView):
 class DeleteUser(DeleteView):
 	model = CustomUser
 	success_url = '/'
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type == 'admin':
+				print('user deleted')
+				return self.get(request, *args, **kwargs)
+			else:
+				return redirect('home')
+		else:
+			return redirect('Accounts:login')
+
+
+class PatientHome(LoginRequiredMixin, TemplateView):
+	login_url = '/login/'
+	template_name = 'patient/patient_home.html'
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type == 'patient':
+				print('user is patient')
+				return self.get(request, *args, **kwargs)
+			else:
+				return redirect('home')
+		else:
+			return redirect('Accounts:login')
+
+
+class PharmacistHome(LoginRequiredMixin, TemplateView):
+	login_url = '/login/'
+	template_name = 'pharmacist/pharmacist_home.html'
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type == 'pharmacist':
+				print('user is pharmacist')
+				return self.get(request, *args, **kwargs)
+			else:
+				return redirect('home')
+		else:
+			return redirect('Accounts:login')
+
+
+class DoctorHome(LoginRequiredMixin, TemplateView):
+	login_url = '/login/'
+	template_name = 'doctor/doctor_home.html'
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type == 'doctor':
+				print('user is doctor')
+				return self.get(request, *args, **kwargs)
+			else:
+				return redirect('home')
+		else:
+			return redirect('Accounts:login')

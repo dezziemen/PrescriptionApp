@@ -25,4 +25,7 @@ urlpatterns = [
     path('user/edit/<int:pk>/', views.EditUser.as_view(), name='edit_user'),
     path('user/create/', views.CreateCustomUser.as_view(), name='create_user'),
     path('user/delete/<int:pk>/', views.DeleteUser.as_view(), name='delete_user'),
+    path('home/patient/', views.PatientHome.as_view(), name='patient_home'),
+    path('home/pharmacist/', views.PharmacistHome.as_view(), name='pharmacist_home'),
+    path('home/doctor/', views.DoctorHome.as_view(), name='doctor_home'),
 ]
