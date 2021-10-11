@@ -10,10 +10,9 @@
 					.icon-button {
 							line-height: 50%;
 					}
-
-                    .th-clickable:hover {
-                        cursor: pointer;
-                    }
+          .th-clickable:hover {
+              cursor: pointer;
+          }
 				</style>
         <title>Goal Digger's Prescription App</title>
     </head>
@@ -21,17 +20,11 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Prescription App</a>
-                {% block home_button %}
-
-                {% endblock %}
-                {% block logout_button %}
-
-                {% endblock %}
+                {% block home_button %}{% endblock %}
+                {% block logout_button %}{% endblock %}
             </div>
         </nav>
-        {% block content %}
-
-        {% endblock %}
+        {% block content %}{% endblock %}
 				<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 				<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -55,17 +48,14 @@
               $(document).ready(function(){
                   $("#search_query").on("keyup", function() {
                       var value = $(this).val().toLowerCase();
+                      var indexColumn = document.querySelector('input[name="search_filter"]:checked').value
+                      console.log(indexColumn)
                       $("#user_table tbody > tr").filter(function() {
-                          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                          $(this).toggle($(this).children(":eq("+indexColumn+")").text().toLowerCase().indexOf(value) > -1)
                       });
                   });
               });
-
-              $(document).ready(function(){
-                 $("")
-              });
         </script>
-        {% block script %}
-        {% endblock %}
+        {% block script %}{% endblock %}
     </body>
 </html>

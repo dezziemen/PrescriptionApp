@@ -4,9 +4,22 @@
 	<div class="container">
 		<!-- Title -->
 		<h1>Admin home</h1>
-		<form class="site-form" action="" method="get">
-			<input type="search" placeholder="Search..." name="search_query" id="search_query">
-		</form>
+{#		<form class="site-form" action="" method="get">#}
+{#      #}
+{#		</form>#}
+    <input type="search" placeholder="Search..." name="search_query" id="search_query">
+    <p>
+      <input type="radio" name="search_filter" id="id_filter" value="0" checked>
+      <label for="id_filter">ID</label>
+      <input type="radio" name="search_filter" id="email_filter" value="1">
+      <label for="email_filter">Email</label>
+      <input type="radio" name="search_filter" id="full_name_filter" value="2">
+      <label for="full_name_filter">Full Name</label>
+      <input type="radio" name="search_filter" id="phone_number_filter" value="3">
+      <label for="phone_number_filter">Phone Number</label>
+      <input type="radio" name="search_filter" id="user_type_filter" value="4">
+      <label for="user_type_filter">User Type</label>
+    </p>
 		<!-- Table -->
 		<div style="display: inline-block; text-align: right;">
 			<a href="{% url 'create_user' %}" class="btn btn-primary icon-button">
