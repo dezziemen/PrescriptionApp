@@ -44,7 +44,7 @@ class AdminHome(LoginRequiredMixin, ListView):
 			email_checkbox = self.request.GET.get('email_checkbox')
 			full_name_checkbox = self.request.GET.get('full_name_checkbox')
 			phone_number_checkbox = self.request.GET.get('phone_number_checkbox')
-			address_checkbox = self.request.GET.get('address_checkbox')
+			user_type_checkbox = self.request.GET.get('user_type_checkbox')
 			all_results = CustomUser.objects.none()
 			if id_checkbox:
 				all_results = all_results | CustomUser.objects.filter(id__icontains=search_query)
@@ -54,8 +54,8 @@ class AdminHome(LoginRequiredMixin, ListView):
 				all_results = all_results | CustomUser.objects.filter(full_name__icontains=search_query)
 			if phone_number_checkbox:
 				all_results = all_results | CustomUser.objects.filter(phone_number__icontains=search_query)
-			if address_checkbox:
-				all_results = all_results | CustomUser.objects.filter(address__icontains=search_query)
+			if user_type_checkbox:
+				all_results = all_results | CustomUser.objects.filter(user_type__icontains=search_query)
 			return all_results
 		else:
 			return CustomUser.objects.all()
@@ -72,14 +72,14 @@ class AdminHome(LoginRequiredMixin, ListView):
 			context['email_checkbox'] = self.request.GET.get('email_checkbox')
 			context['full_name_checkbox'] = self.request.GET.get('full_name_checkbox')
 			context['phone_number_checkbox'] = self.request.GET.get('phone_number_checkbox')
-			context['address_checkbox'] = self.request.GET.get('address_checkbox')
+			context['user_type_checkbox'] = self.request.GET.get('user_type_checkbox')
 		else:
 			context['search_query'] = False
 			context['id_checkbox'] = True
 			context['email_checkbox'] = True
 			context['full_name_checkbox'] = True
 			context['phone_number_checkbox'] = True
-			context['address_checkbox'] = True
+			context['user_type_checkbox'] = True
 		return context
 
 
