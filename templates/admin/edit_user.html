@@ -42,9 +42,9 @@
 			</div>
       <button type="submit" class="btn btn-success">Save</button>
       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal"
-				{% ifequal form.user_type.value 'admin' %}
+				{% if is_superuser %}
 					disabled
-				{% endifequal %}
+				{% endif %}
 			>Delete</button>
 		</form>
 	</div>

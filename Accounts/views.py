@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import FormView
 from .forms import PatientRegisterForm
 from django.contrib.auth import login, logout
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 
 
 class Register(FormView):

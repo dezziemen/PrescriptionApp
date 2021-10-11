@@ -132,3 +132,5 @@ AUTH_USER_MODEL = 'Accounts.CustomUser'
 LOGIN_URL = 'Accounts.login'
 
 LOGIN_REDIRECT_URL = 'home'
+
+LOGOUT_REDIRECT_URL = 'Accounts.login'

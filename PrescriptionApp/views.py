@@ -96,26 +96,31 @@ class EditUser(UpdateView):
 				return redirect('home')
 		return super().get(request, *args, **kwargs)
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		if self.object.is_superuser:
+			context['is_superuser'] = True
+		return context
+
 
 class CreateCustomUser(FormView):
 	template_name = 'admin/create_user.html'
 	form_class = CreateCustomUserForm
 	success_url = '/home/admin/'
 
-	def dispatch(self, request, *args, **kwargs):
+	def get(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
 			if request.user.user_type == 'admin':
-				return self.get(request, *args, **kwargs)
+				return super(CreateCustomUser, self).get(request, *args, **kwargs)
 			else:
 				return redirect('home')
 		return redirect('Accounts:login')
 
 	def form_valid(self, form):
-		if form.is_valid():
-			user = form.save(commit=False)
-			user.email = form.cleaned_data.get('email')
-			form.save()
-		return super().form_valid(form)
+		user = form.save(commit=False)
+		user.email = form.cleaned_data.get('email')
+		form.save()
+		return redirect(self.get_success_url())
 
 
 class DeleteUser(DeleteView):
