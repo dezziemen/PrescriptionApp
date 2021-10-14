@@ -9,16 +9,39 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>Login Page</h1>
-        <form class="site-form" action="{% url 'Accounts:login' %}" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            {{ form.errors }}
-            {% if request.GET.next %}
-                <input type="hidden" name="next" value="{{ request.GET.next }}">
-            {% endif %}
-            <input type="submit" value="Login">
-        </form>
+    <div class="d-flex align-items-center min-vh-100 justify-content-center">
+        <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 col-12 col-lg-6 col-xl-5">
+                        <div class="card  d-flex align-items-center " style="border-radius: 1rem;">
+                            <div class="card-body p-5 text-center ">
+                                <h1 >Welcome</h1>
+                                <div class="my-md-5 pb-5">
+
+                                    <form class="site-form box" action="{% url 'Accounts:login' %}" method="post">
+                                        {% csrf_token %}
+                                    <div class="form-outline mb-5">
+                                        <label for="id_username"></label><input class="form-control form-control-lg" id="id_username" name="username" type="text" placeholder="Email">
+                                        <label for="id_password"></label><input class="form-control form-control-lg" id="id_password" name="password" type="password" placeholder="Password" >
+                                        {% if form.errors %}
+                                           <h4 style="color:red;font-size: small;">Email or password is incorrect</h4>
+                                        {% endif %}
+                                    </div>
+
+                                        {% if request.GET.next %}
+
+                                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                                        {% endif %}
+
+
+                                        <button class="btn btn-primary btn-lg px-5" type="submit" value="Login">Login</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
     </div>
 {% endblock %}
+
