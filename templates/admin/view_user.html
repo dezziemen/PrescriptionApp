@@ -2,10 +2,10 @@
 
 {% block content %}
 	<div class="container">
-		<h1>Edit user ID: {{ object.pk }}</h1>
+		<h1>View user ID: {{ object.pk }}</h1>
 		<form method="post">
 			{% csrf_token %}
-      <a href="{% url 'view_user' pk=object.pk %}" class="btn btn-secondary">View-only</a>
+      <a href="{% url 'edit_user' pk=object.pk %}" class="btn btn-secondary">Edit User</a>
 			<div class="row mb-3">
 				<label for="user_type" class="col-sm-2 col-form-label">{{ form.user_type.label }}</label>
 				<div class="col-sm-10">
@@ -41,32 +41,6 @@
 					{{ form.phone_number.errors }}
 				</div>
 			</div>
-      <button type="submit" class="btn btn-success">Save</button>
-      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal"
-				{% if is_superuser %}
-					disabled
-				{% endif %}
-			>Delete</button>
 		</form>
-	</div>
-	<!-- Modal -->
-	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Delete user (ID: {{ object.pk }})?</h5>
-					<button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true" class="material-icons">close</span>
-					</button>
-				</div>
-				<div class="modal-footer">
-					<form action="{% url 'delete_user' pk=object.pk %}" method="post">
-            {% csrf_token %}
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
-						<button type="submit" class="btn btn-danger">Delete</button>
-					</form>
-				</div>
-			</div>
-		</div>
 	</div>
 {% endblock %}

@@ -9,7 +9,7 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from Accounts.models import CustomUser
-from .forms import CreateCustomUserForm
+from .forms import CreateCustomUserForm, ViewUserForm
 
 
 class Home(LoginRequiredMixin, View):
@@ -126,3 +126,17 @@ class CreateCustomUser(FormView):
 class DeleteUser(DeleteView):
 	model = CustomUser
 	success_url = '/'
+
+
+class ViewUser(UpdateView):
+	template_name = 'admin/view_user.html'
+	model = CustomUser
+	form_class = ViewUserForm
+	success_url = '/'
+
+	def get(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type != 'admin':
+				print('view page: user is not admin')
+				return redirect('home')
+		return super().get(request, *args, **kwargs)
