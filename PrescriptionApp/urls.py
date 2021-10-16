@@ -19,11 +19,16 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/admin/', views.AdminHome.as_view(), name='admin_home'),
     path('', views.Home.as_view(), name='home'),
+    path('home/admin/', views.AdminHome.as_view(), name='admin_home'),
+    path('home/doctor/', views.DoctorHome.as_view(), name='doctor_home'),
+    # path('home/pharmacist/', views.PharmacistHome.as_view(), name='pharmacist_home'),
+    # path('home/patient/', views.PatientHome.as_view(), name='patient_home'),
     path('', include('Accounts.urls')),
     path('user/view/<int:pk>/', views.ViewUser.as_view(), name='view_user'),
     path('user/edit/<int:pk>/', views.EditUser.as_view(), name='edit_user'),
     path('user/create/', views.CreateCustomUser.as_view(), name='create_user'),
     path('user/delete/<int:pk>/', views.DeleteUser.as_view(), name='delete_user'),
+    path('user/prescribe/<int:pk>/', views.Prescribe.as_view(), name='prescribe'),
+    path('user/view_patient/<int:pk>/', views.ViewPatient.as_view(), name='view_patient'),
 ]

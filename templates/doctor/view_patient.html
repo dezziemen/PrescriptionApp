@@ -1,0 +1,11 @@
+{% extends 'non_home.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>View patient ID: {{ object.id }}</h1>
+    {% include 'field_and_label.html' with id='patient_email' label='Email address' value=object.email disabled='disabled' %}
+    {% include 'field_and_label.html' with id='patient_full_name' label='Full name' value=object.full_name disabled='disabled' %}
+    {% include 'field_and_label.html' with id='patient_address' label='Address' value=object.address disabled='disabled' %}
+    {% include 'field_and_label.html' with id='patient_phone_number' label='Phone number' value=object.phone_number disabled='disabled' %}
+  </div>
+{% endblock %}

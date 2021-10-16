@@ -11,43 +11,31 @@
 							line-height: 50%;
 					}
 
-                    .th-clickable:hover {
-                        cursor: pointer;
-                    }
+          .th-clickable:hover {
+              cursor: pointer;
+          }
 				</style>
         <title>Goal Digger's Prescription App</title>
     </head>
     <body style="background-color: #D6D6D6;">
-
         <nav class="navbar navbar-expand-lg navbar-light bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand text-white" href="#">Prescription App</a>
-                {% block home_button %}
-
-                {% endblock %}
-                {% block logout_button %}
-
-                {% endblock %}
+                {% block home_button %}{% endblock %}
+                {% block logout_button %}{% endblock %}
             </div>
         </nav>
-        {% block content %}
-
-        {% endblock %}
+        {% block content %}{% endblock %}
 				<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 				<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-					{% block script %}
-					{% endblock %}
-
-
-            <footer class="bg-dark text-center text-white fixed-bottom">
-                <div class="container">
-                    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-                    <a class="text-white" href="#">Team Goal Diggers</a>
-                    </div>
+        {% block script %}{% endblock %}
+        <footer class="bg-dark text-center text-white fixed-bottom">
+            <div class="container">
+                <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                <a class="text-white" href="#">Team Goal Diggers</a>
                 </div>
-            </footer>
-
-
+            </div>
+        </footer>
     </body>
 </html>

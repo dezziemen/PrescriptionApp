@@ -1,0 +1,13 @@
+<input type="search" placeholder="Search..." name="search_query"
+  {% if search_query %}
+    value="{{ search_query }}"
+  {% endif %}
+required>
+<button type="submit" class="btn btn-success icon-button">
+  <span class="material-icons">search</span>
+</button>
+<a href="{% url 'admin_home' %}" class="btn btn-secondary
+  {% if not search_query %}
+    disabled
+  {% endif %}
+">Reset Search</a>

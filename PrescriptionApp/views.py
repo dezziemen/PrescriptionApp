@@ -3,12 +3,15 @@ from django.views.generic import (
 	View,
 	ListView,
 	FormView,
+	TemplateView,
+	DetailView,
 	UpdateView,
-	DeleteView
+	DeleteView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from Accounts.models import CustomUser
+from Prescriptions.models import Prescription
 from .forms import CreateCustomUserForm, ViewUserForm
 
 
@@ -19,6 +22,8 @@ class Home(LoginRequiredMixin, View):
 		if request.user.is_authenticated:
 			if request.user.user_type == 'admin':
 				return redirect('admin_home')
+			elif request.user.user_type == 'doctor':
+				return redirect('doctor_home')
 		else:
 			return redirect('Accounts:login')
 
@@ -62,10 +67,6 @@ class AdminHome(LoginRequiredMixin, ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super(AdminHome, self).get_context_data(**kwargs)
-		context['sort_type'] = self.request.GET.get('sort_type')
-		if not context['sort_type']:
-			context['sort_type'] = 'id_sort'
-		print(f"sort type: {context['sort_type']}")
 		if self.request.GET.get('search_query'):
 			context['search_query'] = self.request.GET.get('search_query')
 			context['id_checkbox'] = self.request.GET.get('id_checkbox')
@@ -83,7 +84,8 @@ class AdminHome(LoginRequiredMixin, ListView):
 		return context
 
 
-class EditUser(UpdateView):
+class EditUser(LoginRequiredMixin, UpdateView):
+	login_url = '/login/'
 	template_name = 'admin/edit_user.html'
 	model = CustomUser
 	fields = ['user_type', 'email', 'full_name', 'phone_number', 'address', ]
@@ -103,7 +105,8 @@ class EditUser(UpdateView):
 		return context
 
 
-class CreateCustomUser(FormView):
+class CreateCustomUser(LoginRequiredMixin, FormView):
+	login_url = '/login/'
 	template_name = 'admin/create_user.html'
 	form_class = CreateCustomUserForm
 	success_url = '/home/admin/'
@@ -123,12 +126,20 @@ class CreateCustomUser(FormView):
 		return redirect(self.get_success_url())
 
 
-class DeleteUser(DeleteView):
+class DeleteUser(LoginRequiredMixin, DeleteView):
+	login_url = '/login/'
 	model = CustomUser
 	success_url = '/'
 
+	def get(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type != 'admin':
+				return redirect('home')
+		return super().get(request, *args, **kwargs)
 
-class ViewUser(UpdateView):
+
+class ViewUser(LoginRequiredMixin, UpdateView):
+	login_url = '/login/'
 	template_name = 'admin/view_user.html'
 	model = CustomUser
 	form_class = ViewUserForm
@@ -140,3 +151,80 @@ class ViewUser(UpdateView):
 				print('view page: user is not admin')
 				return redirect('home')
 		return super().get(request, *args, **kwargs)
+
+
+class DoctorHome(LoginRequiredMixin, ListView):
+	login_url = '/login/'
+	model = CustomUser
+	template_name = 'doctor/doctor_home.html'
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type == 'doctor':
+				print('user is doctor')
+				return self.get(request, *args, **kwargs)
+			else:
+				return redirect('home')
+		else:
+			return redirect('Accounts:login')
+
+	def get_queryset(self):
+		if self.request.GET.get('search_query'):
+			search_query = self.request.GET.get('search_query')
+			email_checkbox = self.request.GET.get('email_checkbox')
+			full_name_checkbox = self.request.GET.get('full_name_checkbox')
+			phone_number_checkbox = self.request.GET.get('phone_number_checkbox')
+			all_results = CustomUser.objects.none()
+			if email_checkbox:
+				all_results = all_results | CustomUser.objects.filter(email__icontains=search_query)
+			if full_name_checkbox:
+				all_results = all_results | CustomUser.objects.filter(full_name__icontains=search_query)
+			if phone_number_checkbox:
+				all_results = all_results | CustomUser.objects.filter(phone_number__icontains=search_query)
+			return all_results.filter(user_type='patient')
+		return CustomUser.objects.all().filter(user_type='patient')
+
+	def get_context_data(self, **kwargs):
+		context = super(DoctorHome, self).get_context_data(**kwargs)
+		if self.request.GET.get('search_query'):
+			context['search_query'] = self.request.GET.get('search_query')
+			context['email_checkbox'] = self.request.GET.get('email_checkbox')
+			context['full_name_checkbox'] = self.request.GET.get('full_name_checkbox')
+			context['phone_number_checkbox'] = self.request.GET.get('phone_number_checkbox')
+		else:
+			context['search_query'] = False
+			context['email_checkbox'] = True
+			context['full_name_checkbox'] = True
+			context['phone_number_checkbox'] = True
+		return context
+
+
+class ViewPatient(LoginRequiredMixin, DetailView):
+	login_url = '/login/'
+	model = CustomUser
+	template_name = 'doctor/view_patient.html'
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type == 'doctor':
+				print('user is doctor')
+				return self.get(request, *args, **kwargs)
+			else:
+				return redirect('home')
+		else:
+			return redirect('Accounts:login')
+
+	def get_object(self, queryset=None):
+		if queryset is None:
+			queryset = self.get_queryset()
+		pk = self.kwargs.get(self.pk_url_kwarg)
+		queryset = queryset.filter(pk=pk)
+		try:
+			obj = queryset.get()
+		except queryset.model.DoesNotExist:
+			return HttpResponse("No CustomUser found matching the query")
+		return obj
+
+
+class Prescribe(LoginRequiredMixin, FormView):
+	pass

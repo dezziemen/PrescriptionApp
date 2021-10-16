@@ -1,7 +1,17 @@
 {% extends 'home.html' %}
 
 {% block content %}
-    <div class="container">
-        <h1>Doctor home</h1>
-    </div>
+  <div class="container">
+    <h1>{{ request.user.user_type|title }} home</h1>
+    <form class="site-form" action="" method="get">
+      {% include "search_bar.html" %}
+      {% include "doctor_search_checkbox.html" %}
+    </form>
+    {% include "user_table.html" with doctor=True %}
+  </div>
+{% endblock %}
+
+{% block script %}
+  {% load static %}
+	<script src="{% static 'sort_table_column.js' %}"></script>
 {% endblock %}
