@@ -6,41 +6,11 @@
 		<form method="post">
 			{% csrf_token %}
       <a href="{% url 'view_user' pk=object.pk %}" class="btn btn-secondary">View-only</a>
-			<div class="row mb-3">
-				<label for="user_type" class="col-sm-2 col-form-label">{{ form.user_type.label }}</label>
-				<div class="col-sm-10">
-					{{ form.user_type }}
-					{{ form.user_type.errors }}
-				</div>
-			</div>
-			<div class="row mb-3">
-				<label for="email" class="col-sm-2 col-form-label">{{ form.email.label }}</label>
-				<div class="col-sm-10">
-					{{ form.email }}
-					{{ form.email.errors }}
-				</div>
-			</div>
-			<div class="row mb-3">
-				<label for="full_name" class="col-sm-2 col-form-label">{{ form.full_name.label }}</label>
-				<div class="col-sm-10">
-					{{ form.full_name }}
-					{{ form.full_name.errors }}
-				</div>
-			</div>
-			<div class="row mb-3">
-				<label for="address" class="col-sm-2 col-form-label">{{ form.address.label }}</label>
-				<div class="col-sm-10">
-					{{ form.address }}
-					{{ form.address.errors }}
-				</div>
-			</div>
-			<div class="row mb-3">
-				<label for="phone_number" class="col-sm-2 col-form-label">{{ form.phone_number.label }}</label>
-				<div class="col-sm-10">
-					{{ form.phone_number }}
-					{{ form.phone_number.errors }}
-				</div>
-			</div>
+      {% include 'field_and_label.html' with id=form.user_type.auto_id label=form.user_type.label field=form.user_type field_errors=form.user_type.errors %}
+      {% include 'field_and_label.html' with id=form.email.auto_id label=form.email.label field=form.email field_errors=form.email.errors %}
+      {% include 'field_and_label.html' with id=form.full_name.auto_id label=form.full_name.label field=form.full_name field_errors=form.full_name.errors %}
+      {% include 'field_and_label.html' with id=form.address.auto_id label=form.address.label field=form.address field_errors=form.address.errors %}
+      {% include 'field_and_label.html' with id=form.phone_number.auto_id label=form.phone_number.label field=form.phone_number field_errors=form.phone_number.errors %}
       <button type="submit" class="btn btn-success">Save</button>
       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal"
 				{% if is_superuser %}
@@ -49,24 +19,5 @@
 			>Delete</button>
 		</form>
 	</div>
-	<!-- Modal -->
-	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Delete user (ID: {{ object.pk }})?</h5>
-					<button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true" class="material-icons">close</span>
-					</button>
-				</div>
-				<div class="modal-footer">
-					<form action="{% url 'delete_user' pk=object.pk %}" method="post">
-            {% csrf_token %}
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
-						<button type="submit" class="btn btn-danger">Delete</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+  {% include 'modal.html' with title='Delete user' link='delete_user' pk=object.pk button_text='Delete' %}
 {% endblock %}

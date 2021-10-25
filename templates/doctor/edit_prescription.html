@@ -1,0 +1,15 @@
+{% extends 'non_home.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>Edit prescription for patient: &lt;{{ patient_pk }}&gt;,medicine:{{ object.id }}</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% include 'field_and_label.html' with id='medicine' label=form.medicine.label  field=form.medicine field_errors=form.medicine.erors %}
+      {% include 'field_and_label.html' with id='quantity' label=form.quantity.label  field=form.quantity field_errors=form.quantity.erors %}
+      <button type="submit" class="btn btn-success">Save</button>
+      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Delete</button>
+    </form>
+  </div>
+  {% include 'modal.html' with title='Delete medicine' link='delete_medicine' pk=object.id pk2=patient_pk button_text='Delete' %}
+{% endblock %}

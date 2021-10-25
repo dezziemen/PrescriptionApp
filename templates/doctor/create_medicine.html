@@ -1,0 +1,16 @@
+{% extends 'non_home.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>Create new medicine</h1>
+    <form class="site-form" action="" method="post">
+      {% csrf_token %}
+      {% include 'field_and_label.html' with id=form.name.auto_id        field=form.name        label=form.name.label        field_errors=form.name.errors %}
+      {% include 'field_and_label.html' with id=form.description.auto_id field=form.description label=form.description.label field_errors=form.description.errors %}
+      {% include 'field_and_label.html' with id=form.tablets.auto_id     field=form.tablets     label=form.tablets.label     field_errors=form.tablets.errors %}
+      {% include 'field_and_label.html' with id=form.volume.auto_id      field=form.volume      label=form.volume.label      field_errors=form.volume.errors %}
+      <button type="submit" class="btn btn-success">Create medicine</button>
+    </form>
+    <br><br>
+  </div>
+{% endblock %}

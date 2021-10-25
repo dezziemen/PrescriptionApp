@@ -1,0 +1,31 @@
+{% extends 'non_home.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>Prescribe to patient ID: &lt;{{ pk }}&gt;</h1>
+    <h2>Add medicine</h2>
+    <form class="site-form" action="" method="post">
+      {% csrf_token %}
+      {% include 'field_and_label.html' with id=form.medicine.auto_id      label=form.medicine.label      field=form.medicine      field_errors=form.medicine.errors %}
+      {% include 'field_and_label.html' with id=form.quantity.auto_id      label=form.quantity.label      field=form.quantity      field_errors=form.quantity.errors %}
+      <div class="d-grid">
+      <button type="submit" class="btn btn-primary icon-button">
+        <span class="material-icons">add</span>
+      </button>
+      </div>
+    </form>
+    <br><br>
+    {{ items }}
+    <h2>Current prescriptions</h2>
+    <h2>{{ object.id }}</h2>
+    {% include 'medicine_quantity_table.html' with link='edit_prescription' pk=pk %}
+    <div class="d-grid">
+      <a href="" class="btn btn-primary">Prescribe</a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  {% load static %}
+	<script src="{% static 'sort_table_column.js' %}"></script>
+{% endblock %}

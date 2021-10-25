@@ -1,6 +1,7 @@
 <div class="row mb-3">
-  <label for="{{ id }}" class="col-sm-3 col-form-label">{{ label }}</label>
+  <label for="{{ id }}" class="col-sm-3 col-form-label" {{ disabled }}>{{ label }}</label>
   <div class="col-sm-9">
-    <input type="text" id="{{ id }}" value="{{ value }}" {{ disabled }}>
+    {{ field }}
+    {{ field_errors }}
   </div>
 </div>

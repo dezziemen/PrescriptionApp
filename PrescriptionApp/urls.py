@@ -31,4 +31,7 @@ urlpatterns = [
     path('user/delete/<int:pk>/', views.DeleteUser.as_view(), name='delete_user'),
     path('user/prescribe/<int:pk>/', views.Prescribe.as_view(), name='prescribe'),
     path('user/view_patient/<int:pk>/', views.ViewPatient.as_view(), name='view_patient'),
+    path('create_medicine/', views.CreateMedicine.as_view(), name='create_medicine'),
+    path('edit_prescription/<int:pk>/cart/<int:med_pk>/', views.EditPrescription.as_view(), name='edit_prescription'),
+    path('delete_medicine/<int:pk2>/medicine/<int:pk>/', views.DeleteMedicine.as_view(), name='delete_medicine'),
 ]

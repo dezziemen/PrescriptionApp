@@ -1,0 +1,26 @@
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{ title }} {{ pk }}?</h5>
+        <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <form action=
+          {% if pk2 %}
+            {% url link pk=pk pk2=pk2 %}
+          {% else %}
+            {% url link pk=pk %}
+          {% endif %}
+        method="post">
+          {% csrf_token %}
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+          <button type="submit" class="btn btn-danger">{{ button_text }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

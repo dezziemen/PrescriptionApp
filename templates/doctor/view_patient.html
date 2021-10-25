@@ -2,10 +2,19 @@
 
 {% block content %}
   <div class="container">
-    <h1>View patient ID: {{ object.id }}</h1>
-    {% include 'field_and_label.html' with id='patient_email' label='Email address' value=object.email disabled='disabled' %}
-    {% include 'field_and_label.html' with id='patient_full_name' label='Full name' value=object.full_name disabled='disabled' %}
-    {% include 'field_and_label.html' with id='patient_address' label='Address' value=object.address disabled='disabled' %}
-    {% include 'field_and_label.html' with id='patient_phone_number' label='Phone number' value=object.phone_number disabled='disabled' %}
+    <h1>View patient ID: &lt;{{ object.id }}&gt;</h1>
+    {% include 'field_and_label.html' with id='patient_email'        label=form.email.label         field=form.email        disabled='disabled' %}
+    {% include 'field_and_label.html' with id='patient_full_name'    label=form.full_name.label     field=form.full_name    disabled='disabled' %}
+    {% include 'field_and_label.html' with id='patient_address'      label=form.address.label       field=form.address      disabled='disabled' %}
+    {% include 'field_and_label.html' with id='patient_phone_number' label=form.phone_number.label  field=form.phone_number disabled='disabled' %}
+    <div class="d-grid" style="display: inline-block; text-align: right;">
+      <a href="{% url 'prescribe' pk=object.id %}" class="btn btn-primary">
+        Add prescription
+      </a>
+    </div>
+    <br>
+    <h2>Past prescriptions</h2>
+    {% include 'prescription_table.html' with link='edit_prescription' pk=object.id cart=cart items=patient_prescriptions %}
+    {{ patient_prescriptions }}
   </div>
 {% endblock %}
