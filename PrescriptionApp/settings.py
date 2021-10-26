@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Accounts',
     'django_extensions',
     'Prescriptions',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'PrescriptionApp.urls'
@@ -139,3 +141,8 @@ LOGIN_URL = 'Accounts.login'
 LOGIN_REDIRECT_URL = 'home'
 
 LOGOUT_REDIRECT_URL = 'Accounts.login'
+
+# For debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
