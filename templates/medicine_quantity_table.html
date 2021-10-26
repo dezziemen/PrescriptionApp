@@ -15,8 +15,8 @@
       <tr>
         <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.medicine }}</a></td>
         <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.quantity }}</a></td>
-        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.medicine__tablets }}</a></td>
-        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.medicine__volume }}</a></td>
+        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.medicine.tablets }}</a></td>
+        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.medicine.volume }}</a></td>
       </tr>
     {% endfor %}
   </table>

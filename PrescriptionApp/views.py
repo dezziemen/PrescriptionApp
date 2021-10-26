@@ -264,7 +264,8 @@ class Prescribe(LoginRequiredMixin, CreateView):
 	def get_context_data(self, **kwargs):
 		pk = self.kwargs.get(self.pk_url_kwarg)
 		context = super(Prescribe, self).get_context_data()
-		context['items'] = MedicineQuantity.objects.filter(medicine_cart__patient_id=pk)
+		# select_related gets the Medicine ForeignKey in MedicineQuantity
+		context['items'] = MedicineQuantity.objects.filter(medicine_cart__patient_id=pk).select_related('medicine')
 		# context['medicine'] = Medicine.objects.all().prefetch_related('medicinequantity_set')
 		# print(context['items'])
 		context['cart'] = MedicineCart.objects.get(patient_id=pk)

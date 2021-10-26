@@ -15,7 +15,6 @@
       </div>
     </form>
     <br><br>
-    {{ items }}
     <h2>Current prescriptions</h2>
     <h2>{{ object.id }}</h2>
     {% include 'medicine_quantity_table.html' with link='edit_prescription' pk=pk %}
