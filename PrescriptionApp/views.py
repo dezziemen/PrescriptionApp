@@ -1,7 +1,7 @@
 import datetime
 
 from django.http import HttpResponse
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import (
 	View,
 	ListView,
@@ -273,7 +273,7 @@ class Prescribe(LoginRequiredMixin, CreateView):
 			item.prescription = None
 			print(item)
 		# context['medicine'] = Medicine.objects.all().prefetch_related('medicinequantity_set')
-		print(MedicineQuantity.objects.all())
+		# print(MedicineQuantity.objects.all())
 		context['cart'], _ = MedicineCart.objects.get_or_create(patient_id=pk)
 		context['pk'] = pk
 		return context
@@ -339,13 +339,17 @@ class DeleteMedicine(LoginRequiredMixin, DeleteView):
 
 class SubmitPrescription(LoginRequiredMixin, View):
 	login_url = '/login/'
-	template_name = 'home.html'
 
-	def get_queryset(self):
+	def dispatch(self, request, *args, **kwargs):
 		print('submitting...')
 		pk = self.kwargs.get('pk')
-		medicine_quantity = MedicineQuantity.objects.prefetch_related('medicine_cart_set')
-		print(medicine_quantity)
-		prescription = Prescription(patient_id=pk, doctor=self.request.user)
-		return medicine_quantity
-		# return reverse_lazy('view_patient', kwargs={'pk': pk})
+		medicine_quantity = MedicineQuantity.objects.filter(medicine_cart__patient_id=pk)
+		prescription = Prescription(doctor=request.user, patient_id=pk)
+		prescription.save()
+		for med in medicine_quantity:
+			print(f'Before: {med.prescription}, {med.medicine_cart}')
+			med.prescription = prescription
+			med.medicine_cart = None
+			print(f'After: {med.prescription}, {med.medicine_cart}')
+			med.save()
+		return redirect('view_patient', pk=pk)
