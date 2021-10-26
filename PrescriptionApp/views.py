@@ -11,6 +11,7 @@ from django.views.generic import (
 	CreateView,
 	UpdateView,
 	DeleteView,
+	RedirectView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
@@ -225,14 +226,13 @@ class ViewPatient(LoginRequiredMixin, UpdateView):
 		try:
 			obj = queryset.get()
 		except queryset.model.DoesNotExist:
-			return HttpResponse("No CustomUser found matching the query")
+			return HttpResponse("No CustomUs.er found matching the query")
 		return obj
 
 	def get_context_data(self, **kwargs):
 		context = super(ViewPatient, self).get_context_data(**kwargs)
 		pk = self.kwargs.get(self.pk_url_kwarg)
 		context['patient_prescriptions'] = Prescription.objects.filter(patient_id=pk)
-		context['cart'] = MedicineCart.objects.get_or_create(patient_id=pk)
 		return context
 
 
@@ -254,11 +254,13 @@ class Prescribe(LoginRequiredMixin, CreateView):
 	def form_valid(self, form):
 		medicine = form.save(commit=False)
 		pk = self.kwargs.get(self.pk_url_kwarg)
-		prescription, _ = Prescription.objects.get_or_create(doctor=self.request.user, patient_id=pk, pharmacist=None, collected=False)
+		# prescription, _ = Prescription.objects.get_or_create(doctor=self.request.user, patient_id=pk, pharmacist=None, collected=False)
 		medicine_cart, _ = MedicineCart.objects.get_or_create(patient_id=pk)
-		medicine.prescription = prescription
+		print(medicine.prescription)
+		medicine.prescription = None
 		medicine.medicine_cart = medicine_cart
-		form.save()
+		print(medicine)
+		medicine.save()
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):
@@ -266,9 +268,13 @@ class Prescribe(LoginRequiredMixin, CreateView):
 		context = super(Prescribe, self).get_context_data()
 		# select_related gets the Medicine ForeignKey in MedicineQuantity
 		context['items'] = MedicineQuantity.objects.filter(medicine_cart__patient_id=pk).select_related('medicine')
+		# Ensure that MedicineQuantity is not linked to any Prescriptions yet
+		for item in context['items']:
+			item.prescription = None
+			print(item)
 		# context['medicine'] = Medicine.objects.all().prefetch_related('medicinequantity_set')
-		# print(context['items'])
-		context['cart'] = MedicineCart.objects.get(patient_id=pk)
+		print(MedicineQuantity.objects.all())
+		context['cart'], _ = MedicineCart.objects.get_or_create(patient_id=pk)
 		context['pk'] = pk
 		return context
 
@@ -299,10 +305,10 @@ class EditPrescription(LoginRequiredMixin, UpdateView):
 		if request.user.is_authenticated:
 			if request.user.user_type != 'doctor':
 				return redirect('home')
-		med_pk = self.kwargs.get('med_pk')
+		# med_pk = self.kwargs.get('med_pk')
 		patient_pk = self.kwargs.get('pk')
 		user_meds = MedicineQuantity.objects.filter(medicine_cart__patient_id=patient_pk)
-		print(self.get_object() in user_meds)
+		# print(self.get_object() in user_meds)
 		return super().get(request, *args, **kwargs)
 
 	def get_object(self, queryset=None):
@@ -333,3 +339,13 @@ class DeleteMedicine(LoginRequiredMixin, DeleteView):
 
 class SubmitPrescription(LoginRequiredMixin, View):
 	login_url = '/login/'
+	template_name = 'home.html'
+
+	def get_queryset(self):
+		print('submitting...')
+		pk = self.kwargs.get('pk')
+		medicine_quantity = MedicineQuantity.objects.prefetch_related('medicine_cart_set')
+		print(medicine_quantity)
+		prescription = Prescription(patient_id=pk, doctor=self.request.user)
+		return medicine_quantity
+		# return reverse_lazy('view_patient', kwargs={'pk': pk})

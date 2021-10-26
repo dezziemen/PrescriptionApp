@@ -34,10 +34,10 @@ class MedicineCart(models.Model):
 
 
 class MedicineQuantity(models.Model):
-    prescription = models.ForeignKey(Prescription, on_delete=models.DO_NOTHING, default=None, blank=True, null=True)
-    medicine_cart = models.ForeignKey(MedicineCart, on_delete=models.DO_NOTHING, default=None, blank=True, null=True)
+    prescription = models.ForeignKey(Prescription, on_delete=models.SET_NULL, default=None, blank=True, null=True)
+    medicine_cart = models.ForeignKey(MedicineCart, on_delete=models.SET_NULL, default=None, blank=True, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.DO_NOTHING)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     def __str__(self):
-        return str(self.quantity) + ' ' + str(self.medicine)
+        return f'Quantity: {self.quantity}\nMedicine: {self.medicine}\nPrescription: {self.prescription}\nMedicine cart: {self.medicine_cart}'

@@ -19,7 +19,7 @@
     <h2>{{ object.id }}</h2>
     {% include 'medicine_quantity_table.html' with link='edit_prescription' pk=pk %}
     <div class="d-grid">
-      <a href="" class="btn btn-primary">Prescribe</a>
+      <a href="{% url 'submit_prescription' pk=pk %}" class="btn btn-primary">Prescribe</a>
     </div>
   </div>
 {% endblock %}
