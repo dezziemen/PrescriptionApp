@@ -14,8 +14,7 @@
     </div>
     <br>
     <h2>Past prescriptions</h2>
-{#    {% include 'prescription_table.html' with link='view_prescription' pk=object.id cart=cart items=patient_prescriptions %}#}
-    {% include 'data_table.html' with link='view_prescription' pk=object.id titles=titles items=items %}
+    {% include 'data_table.html' with link='view_prescription' pk=object.id %}
     {{ patient_prescriptions }}
   </div>
 {% endblock %}

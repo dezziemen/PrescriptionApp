@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="container">
-    <h1>Edit prescription for patient: &lt;{{ patient_pk }}&gt;,medicine:{{ object.id }}</h1>
+    <h1>Edit cart item:{{ object.id }}</h1>
     <form method="post">
       {% csrf_token %}
       {% include 'field_and_label.html' with id='medicine' label=form.medicine.label  field=form.medicine field_errors=form.medicine.erors %}
@@ -11,5 +11,5 @@
       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Delete</button>
     </form>
   </div>
-  {% include 'modal.html' with title='Delete medicine' link='delete_medicine' pk=object.id pk2=patient_pk button_text='Delete' %}
+  {% include 'modal.html' with title='Delete medicine' link='delete_medicine' pk=object.id button_text='Delete' %}
 {% endblock %}

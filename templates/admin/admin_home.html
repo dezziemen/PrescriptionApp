@@ -6,14 +6,20 @@
 		<h1>{{ request.user.user_type|title }} home</h1>
     <form class="site-form" action="" method="get">
       {% include "search_bar.html" %}
-      {% include "admin_search_checkbox.html" %}
+      <p>
+        {% include 'search_checkbox.html' with checkbox_id='id_checkbox' is_checked=id_checkbox label='ID' %}
+        {% include 'search_checkbox.html' with checkbox_id='email_checkbox' is_checked=email_checkbox label='Email' %}
+        {% include 'search_checkbox.html' with checkbox_id='full_name_checkbox' is_checked=full_name_checkbox label='Full Name' %}
+        {% include 'search_checkbox.html' with checkbox_id='phone_number_checkbox' is_checked=phone_number_checkbox label='Phone Number' %}
+        {% include 'search_checkbox.html' with checkbox_id='user_type_checkbox' is_checked=user_type_checkbox label='User Type' %}
+      </p>
     </form>
     <div style="display: inline-block; text-align: right;">
       <a href="{% url 'create_user' %}" class="btn btn-primary icon-button">
         <span class="material-icons">person_add</span>
       </a>
     </div>
-    {% include "user_table.html" with link='view_user' %}
+    {% include "data_table.html" with link='view_user' %}
 	</div>
 {% endblock %}
 

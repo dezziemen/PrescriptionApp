@@ -17,7 +17,7 @@
     <br><br>
     <h2>Current prescriptions</h2>
     <h2>{{ object.id }}</h2>
-    {% include 'medicine_quantity_table.html' with link='edit_prescription' pk=pk %}
+    {% include 'data_table.html' with link='edit_cart_item' %}
     <div class="d-grid">
       <a href="{% url 'submit_prescription' pk=pk %}" class="btn btn-primary">Prescribe</a>
     </div>

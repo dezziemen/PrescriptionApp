@@ -13,6 +13,7 @@ from django.views.generic import (
 	DeleteView,
 	RedirectView,
 )
+from django.views.generic.base import ContextMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from Accounts.models import CustomUser
@@ -34,7 +35,7 @@ class Home(LoginRequiredMixin, View):
 			return redirect('Accounts:login')
 
 
-class AdminHome(LoginRequiredMixin, ListView):
+class AdminHome(LoginRequiredMixin, TemplateView):
 	login_url = '/login/'
 	template_name = 'admin/admin_home.html'
 
@@ -48,7 +49,10 @@ class AdminHome(LoginRequiredMixin, ListView):
 		else:
 			return redirect('Accounts:login')
 
-	def get_queryset(self):
+	def get_context_data(self, **kwargs):
+		context = super(AdminHome, self).get_context_data(**kwargs)
+		context['items'] = []
+		all_results = CustomUser.objects.none()
 		if self.request.GET.get('search_query'):
 			search_query = self.request.GET.get('search_query')
 			id_checkbox = self.request.GET.get('id_checkbox')
@@ -56,7 +60,14 @@ class AdminHome(LoginRequiredMixin, ListView):
 			full_name_checkbox = self.request.GET.get('full_name_checkbox')
 			phone_number_checkbox = self.request.GET.get('phone_number_checkbox')
 			user_type_checkbox = self.request.GET.get('user_type_checkbox')
-			all_results = CustomUser.objects.none()
+			context.update({
+				'search_query': search_query,
+				'id_checkbox': id_checkbox,
+				'email_checkbox': email_checkbox,
+				'full_name_checkbox': full_name_checkbox,
+				'phone_number_checkbox': phone_number_checkbox,
+				'user_type_checkbox': user_type_checkbox,
+			})
 			if id_checkbox:
 				all_results = all_results | CustomUser.objects.filter(id__icontains=search_query)
 			if email_checkbox:
@@ -67,26 +78,34 @@ class AdminHome(LoginRequiredMixin, ListView):
 				all_results = all_results | CustomUser.objects.filter(phone_number__icontains=search_query)
 			if user_type_checkbox:
 				all_results = all_results | CustomUser.objects.filter(user_type__icontains=search_query)
-			return all_results
 		else:
-			return CustomUser.objects.all()
-
-	def get_context_data(self, **kwargs):
-		context = super(AdminHome, self).get_context_data(**kwargs)
-		if self.request.GET.get('search_query'):
-			context['search_query'] = self.request.GET.get('search_query')
-			context['id_checkbox'] = self.request.GET.get('id_checkbox')
-			context['email_checkbox'] = self.request.GET.get('email_checkbox')
-			context['full_name_checkbox'] = self.request.GET.get('full_name_checkbox')
-			context['phone_number_checkbox'] = self.request.GET.get('phone_number_checkbox')
-			context['user_type_checkbox'] = self.request.GET.get('user_type_checkbox')
-		else:
-			context['search_query'] = False
-			context['id_checkbox'] = True
-			context['email_checkbox'] = True
-			context['full_name_checkbox'] = True
-			context['phone_number_checkbox'] = True
-			context['user_type_checkbox'] = True
+			all_results = CustomUser.objects.all()
+			context.update({
+				'search_query': False,
+				'id_checkbox': True,
+				'email_checkbox': True,
+				'full_name_checkbox': True,
+				'phone_number_checkbox': True,
+				'user_type_checkbox': True,
+			})
+		for result in all_results:
+			context['items'].append([
+				result.id,
+				[
+					result.id,
+					result.email,
+					result.full_name,
+					result.phone_number,
+					result.user_type,
+				]
+			])
+		context['titles'] = [
+			'ID',
+			'Email',
+			'Full Name',
+			'Phone Number',
+			'User Type',
+		]
 		return context
 
 
@@ -159,7 +178,7 @@ class ViewUser(LoginRequiredMixin, UpdateView):
 		return super().get(request, *args, **kwargs)
 
 
-class DoctorHome(LoginRequiredMixin, ListView):
+class DoctorHome(LoginRequiredMixin, TemplateView):
 	login_url = '/login/'
 	model = CustomUser
 	template_name = 'doctor/doctor_home.html'
@@ -174,24 +193,38 @@ class DoctorHome(LoginRequiredMixin, ListView):
 		else:
 			return redirect('Accounts:login')
 
-	def get_queryset(self):
+	def get_context_data(self, **kwargs):
+		context = super(DoctorHome, self).get_context_data(**kwargs)
+		context['items'] = []
+		all_results = CustomUser.objects.none()
 		if self.request.GET.get('search_query'):
 			search_query = self.request.GET.get('search_query')
 			email_checkbox = self.request.GET.get('email_checkbox')
 			full_name_checkbox = self.request.GET.get('full_name_checkbox')
 			phone_number_checkbox = self.request.GET.get('phone_number_checkbox')
-			all_results = CustomUser.objects.none()
 			if email_checkbox:
 				all_results = all_results | CustomUser.objects.filter(email__icontains=search_query)
 			if full_name_checkbox:
 				all_results = all_results | CustomUser.objects.filter(full_name__icontains=search_query)
 			if phone_number_checkbox:
 				all_results = all_results | CustomUser.objects.filter(phone_number__icontains=search_query)
-			return all_results.filter(user_type='patient')
-		return CustomUser.objects.all().filter(user_type='patient')
-
-	def get_context_data(self, **kwargs):
-		context = super(DoctorHome, self).get_context_data(**kwargs)
+			all_results = all_results.filter(user_type='patient')
+		else:
+			all_results = CustomUser.objects.filter(user_type='patient')
+		for result in all_results:
+			context['items'].append([
+				result.id,
+				[
+					result.email,
+					result.full_name,
+					result.phone_number,
+				]
+			])
+		context['titles'] = [
+			'Email',
+			'Full Name',
+			'Phone Number',
+		]
 		if self.request.GET.get('search_query'):
 			context['search_query'] = self.request.GET.get('search_query')
 			context['email_checkbox'] = self.request.GET.get('email_checkbox')
@@ -283,11 +316,29 @@ class Prescribe(LoginRequiredMixin, CreateView):
 		pk = self.kwargs.get(self.pk_url_kwarg)
 		context = super(Prescribe, self).get_context_data()
 		# select_related gets the Medicine ForeignKey in MedicineQuantity
-		context['items'] = MedicineQuantity.objects.filter(medicine_cart__patient_id=pk).select_related('medicine')
-		# Ensure that MedicineQuantity is not linked to any Prescriptions yet
-		for item in context['items']:
+		context['items'] = []
+		results = MedicineQuantity.objects.filter(medicine_cart__patient_id=pk).select_related('medicine')
+		for item in results:
+			context['items'].append([
+				item.id,
+				[
+					item.medicine,
+					item.quantity,
+					item.medicine.tablets,
+					item.medicine.volume,
+				]
+			])
+			# Ensure that MedicineQuantity is not linked to any Prescriptions yet
 			item.prescription = None
-			print(item)
+		context['titles'] = [
+			'Medicine',
+			'Quantity',
+			'Tablets',
+			'Volume',
+		]
+		# for item in context['items']:
+		# 	item.prescription = None
+		# 	print(item)
 		context['cart'], _ = MedicineCart.objects.get_or_create(patient_id=pk)
 		context['pk'] = pk
 		return context
@@ -306,14 +357,15 @@ class CreateMedicine(LoginRequiredMixin, CreateView):
 		return super().get(request, *args, **kwargs)
 
 
-class EditPrescription(LoginRequiredMixin, UpdateView):
+class EditCartItem(LoginRequiredMixin, UpdateView):
 	login_url = '/login/'
 	model = MedicineQuantity
 	fields = ['medicine', 'quantity']
-	template_name = 'doctor/edit_prescription.html'
+	template_name = 'doctor/edit_cart_item.html'
 
 	def get_success_url(self, **kwargs):
-		return reverse_lazy('prescribe', kwargs={'pk': self.kwargs.get(self.pk_url_kwarg)})
+		patient_pk = MedicineQuantity.objects.get(pk=self.kwargs.get('pk')).medicine_cart.patient_id
+		return reverse_lazy('prescribe', kwargs={'pk': patient_pk})
 
 	def get(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
@@ -322,14 +374,11 @@ class EditPrescription(LoginRequiredMixin, UpdateView):
 		return super().get(request, *args, **kwargs)
 
 	def get_object(self, queryset=None):
-		obj = MedicineQuantity.objects.get(id=self.kwargs.get('med_pk'))
-		if obj.medicine_cart.patient.pk != self.kwargs.get('pk'):
-			return HttpResponse("Action not allowed !")
+		obj = MedicineQuantity.objects.get(id=self.kwargs.get('pk'))
 		return obj
 
 	def get_context_data(self, **kwargs):
-		context = super(EditPrescription, self).get_context_data()
-		context['patient_pk'] = self.kwargs.get('pk')
+		context = super(EditCartItem, self).get_context_data()
 		return context
 
 
@@ -338,7 +387,8 @@ class DeleteMedicine(LoginRequiredMixin, DeleteView):
 	model = MedicineQuantity
 
 	def get_success_url(self, **kwargs):
-		return reverse_lazy('prescribe', kwargs={'pk': self.kwargs.get('pk2')})
+		patient_pk = MedicineQuantity.objects.get(pk=self.kwargs.get('pk')).medicine_cart.patient_id
+		return reverse_lazy('prescribe', kwargs={'pk': patient_pk})
 
 	def get(self, request, *args, **kwargs):
 		if request.user.is_authenticated:
@@ -380,9 +430,9 @@ class ViewPrescription(LoginRequiredMixin, UpdateView):
 			return redirect('Accounts:login')
 
 	def get_context_data(self, *, object_list=None, **kwargs):
-		prescription_pk = self.kwargs.get('prescription_pk')
+		pk = self.kwargs.get('pk')
 		context = super(ViewPrescription, self).get_context_data()
-		medicine_quantity = MedicineQuantity.objects.filter(prescription_id=prescription_pk).select_related('medicine')
+		medicine_quantity = MedicineQuantity.objects.filter(prescription_id=pk).select_related('medicine')
 		context['items'] = []
 		for item in medicine_quantity:
 			context['items'].append([
@@ -400,15 +450,14 @@ class ViewPrescription(LoginRequiredMixin, UpdateView):
 			'Tablets',
 			'Volume',
 		]
-		context['prescription_id'] = prescription_pk
+		context['prescription_id'] = pk
 		for item in medicine_quantity:
 			print(item)
 		return context
 
 	def get_object(self, queryset=None):
-		prescription_pk = self.kwargs.get('prescription_pk')
-		obj = Prescription.objects.select_related('doctor').get(id=prescription_pk)
+		pk = self.kwargs.get('pk')
+		obj = Prescription.objects.select_related('doctor').get(id=pk)
 		print(f'obj:\n{obj}')
 		print(obj.doctor)
 		return obj
-

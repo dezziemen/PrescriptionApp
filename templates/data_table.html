@@ -14,7 +14,7 @@
       <tr>
         {% for data in item %}
           {% if link %}
-            <td><a href="{% url link pk=pk prescription_pk=item_id %}">{{ data }}</a></td>
+            <td><a href="{% url link pk=item_id %}">{{ data }}</a></td>
           {% else %}
             <td>{{ data }}</td>
           {% endif %}

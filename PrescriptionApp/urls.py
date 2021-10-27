@@ -33,10 +33,10 @@ urlpatterns = [
     path('user/prescribe/<int:pk>/', views.Prescribe.as_view(), name='prescribe'),
     path('user/view_patient/<int:pk>/', views.ViewPatient.as_view(), name='view_patient'),
     path('create_medicine/', views.CreateMedicine.as_view(), name='create_medicine'),
-    path('edit_prescription/<int:pk>/cart/<int:med_pk>/', views.EditPrescription.as_view(), name='edit_prescription'),
-    path('delete_medicine/<int:pk2>/medicine/<int:pk>/', views.DeleteMedicine.as_view(), name='delete_medicine'),
+    path('edit_cart_item/<int:pk>/', views.EditCartItem.as_view(), name='edit_cart_item'),
+    path('delete_medicine/<int:pk>/', views.DeleteMedicine.as_view(), name='delete_medicine'),
     path('submit_prescription/<int:pk>/', views.SubmitPrescription.as_view(), name='submit_prescription'),
-    path('view_prescription/<int:pk>/prescription/<int:prescription_pk>/', views.ViewPrescription.as_view(), name='view_prescription'),
+    path('view_prescription/<int:pk>/', views.ViewPrescription.as_view(), name='view_prescription'),
 ]
 
 if settings.DEBUG:

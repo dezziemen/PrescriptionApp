@@ -6,9 +6,13 @@
     <a href="{% url 'create_medicine' %}" class="btn btn-primary">Add medicine</a>
     <form class="site-form" action="" method="get">
       {% include "search_bar.html" %}
-      {% include "doctor_search_checkbox.html" %}
+      <p>
+        {% include 'search_checkbox.html' with checkbox_id='email_checkbox' is_checked=email_checkbox label='Email' %}
+        {% include 'search_checkbox.html' with checkbox_id='full_name_checkbox' is_checked=full_name_checkbox label='Full Name' %}
+        {% include 'search_checkbox.html' with checkbox_id='phone_number_checkbox' is_checked=phone_number_checkbox label='Phone Number' %}
+      </p>
     </form>
-    {% include "user_table.html" with link='view_patient' %}
+    {% include 'data_table.html' with link='view_patient' %}
   </div>
 {% endblock %}
 
