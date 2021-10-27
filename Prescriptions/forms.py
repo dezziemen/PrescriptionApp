@@ -18,3 +18,15 @@ class MedicineCreationForm(forms.ModelForm):
     class Meta:
         model = Medicine
         fields = ['name', 'description', 'tablets', 'volume']
+
+
+class ViewPrescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Prescription
+        fields = ['date', 'doctor', 'pharmacist', 'patient', 'collected']
+
+    date = forms.DateField(disabled=True)
+    doctor = forms.CharField(disabled=True)
+    pharmacist = forms.CharField(disabled=True)
+    patient = forms.CharField(disabled=True)
+    collected = forms.BooleanField(disabled=True)
