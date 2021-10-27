@@ -18,7 +18,7 @@ from django.shortcuts import redirect
 from Accounts.models import CustomUser
 from Prescriptions.models import Prescription, MedicineCart, MedicineQuantity, Medicine
 from Accounts.forms import CreateCustomUserForm, ViewUserForm
-from Prescriptions.forms import PrescriptionCreationForm, MedicineQuantityCreationForm, MedicineCreationForm
+from Prescriptions.forms import PrescriptionCreationForm, MedicineQuantityCreationForm, MedicineCreationForm, ViewPrescriptionForm
 
 
 class Home(LoginRequiredMixin, View):
@@ -226,13 +226,30 @@ class ViewPatient(LoginRequiredMixin, UpdateView):
 		try:
 			obj = queryset.get()
 		except queryset.model.DoesNotExist:
-			return HttpResponse("No CustomUs.er found matching the query")
+			return HttpResponse("No CustomUser found matching the query")
 		return obj
 
 	def get_context_data(self, **kwargs):
 		context = super(ViewPatient, self).get_context_data(**kwargs)
 		pk = self.kwargs.get(self.pk_url_kwarg)
-		context['patient_prescriptions'] = Prescription.objects.filter(patient_id=pk)
+		prescriptions = Prescription.objects.filter(patient_id=pk)
+		context['items'] = []
+		for item in prescriptions:
+			context['items'].append([
+				item.id,
+				[
+					item.date,
+					item.doctor,
+					item.pharmacist,
+					item.collected
+				]
+			])
+		context['titles'] = [
+			'Date',
+			'Doctor',
+			'Pharmacist',
+			'Collected',
+		]
 		return context
 
 
@@ -254,7 +271,6 @@ class Prescribe(LoginRequiredMixin, CreateView):
 	def form_valid(self, form):
 		medicine = form.save(commit=False)
 		pk = self.kwargs.get(self.pk_url_kwarg)
-		# prescription, _ = Prescription.objects.get_or_create(doctor=self.request.user, patient_id=pk, pharmacist=None, collected=False)
 		medicine_cart, _ = MedicineCart.objects.get_or_create(patient_id=pk)
 		print(medicine.prescription)
 		medicine.prescription = None
@@ -272,8 +288,6 @@ class Prescribe(LoginRequiredMixin, CreateView):
 		for item in context['items']:
 			item.prescription = None
 			print(item)
-		# context['medicine'] = Medicine.objects.all().prefetch_related('medicinequantity_set')
-		# print(MedicineQuantity.objects.all())
 		context['cart'], _ = MedicineCart.objects.get_or_create(patient_id=pk)
 		context['pk'] = pk
 		return context
@@ -305,10 +319,6 @@ class EditPrescription(LoginRequiredMixin, UpdateView):
 		if request.user.is_authenticated:
 			if request.user.user_type != 'doctor':
 				return redirect('home')
-		# med_pk = self.kwargs.get('med_pk')
-		patient_pk = self.kwargs.get('pk')
-		user_meds = MedicineQuantity.objects.filter(medicine_cart__patient_id=patient_pk)
-		# print(self.get_object() in user_meds)
 		return super().get(request, *args, **kwargs)
 
 	def get_object(self, queryset=None):
@@ -353,3 +363,52 @@ class SubmitPrescription(LoginRequiredMixin, View):
 			print(f'After: {med.prescription}, {med.medicine_cart}')
 			med.save()
 		return redirect('view_patient', pk=pk)
+
+
+class ViewPrescription(LoginRequiredMixin, UpdateView):
+	template_name = 'doctor/view_prescription.html'
+	model = Prescription
+	form_class = ViewPrescriptionForm
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			if request.user.user_type == 'doctor':
+				return self.get(request, *args, **kwargs)
+			else:
+				return redirect('home')
+		else:
+			return redirect('Accounts:login')
+
+	def get_context_data(self, *, object_list=None, **kwargs):
+		prescription_pk = self.kwargs.get('prescription_pk')
+		context = super(ViewPrescription, self).get_context_data()
+		medicine_quantity = MedicineQuantity.objects.filter(prescription_id=prescription_pk).select_related('medicine')
+		context['items'] = []
+		for item in medicine_quantity:
+			context['items'].append([
+				item.id,
+				[
+					item.medicine,
+					item.quantity,
+					item.medicine.tablets,
+					item.medicine.volume,
+				]
+			])
+		context['titles'] = [
+			'Medicine',
+			'Quantity',
+			'Tablets',
+			'Volume',
+		]
+		context['prescription_id'] = prescription_pk
+		for item in medicine_quantity:
+			print(item)
+		return context
+
+	def get_object(self, queryset=None):
+		prescription_pk = self.kwargs.get('prescription_pk')
+		obj = Prescription.objects.select_related('doctor').get(id=prescription_pk)
+		print(f'obj:\n{obj}')
+		print(obj.doctor)
+		return obj
+

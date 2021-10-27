@@ -36,6 +36,7 @@ urlpatterns = [
     path('edit_prescription/<int:pk>/cart/<int:med_pk>/', views.EditPrescription.as_view(), name='edit_prescription'),
     path('delete_medicine/<int:pk2>/medicine/<int:pk>/', views.DeleteMedicine.as_view(), name='delete_medicine'),
     path('submit_prescription/<int:pk>/', views.SubmitPrescription.as_view(), name='submit_prescription'),
+    path('view_prescription/<int:pk>/prescription/<int:prescription_pk>/', views.ViewPrescription.as_view(), name='view_prescription'),
 ]
 
 if settings.DEBUG:

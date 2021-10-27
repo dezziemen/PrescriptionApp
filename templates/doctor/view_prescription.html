@@ -1,0 +1,13 @@
+{% extends 'non_home.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>View prescription: {{ object.id }}</h1>
+    {% include 'field_and_label.html' with id='prescription_date'       label=form.date.label       field=form.date       disabled='disabled' %}
+    {% include 'field_and_label.html' with id='prescription_doctor'     label=form.doctor.label     field=form.doctor     disabled='disabled' %}
+    {% include 'field_and_label.html' with id='prescription_pharmacist' label=form.pharmacist.label field=form.pharmacist disabled='disabled' %}
+    {% include 'field_and_label.html' with id='prescription_patient'    label=form.patient.label    field=form.patient    disabled='disabled' %}
+    {% include 'field_and_label.html' with id='prescription_collected'  label=form.collected.label  field=form.collected  disabled='disabled' %}
+    {% include 'data_table.html' with pk=object.id items=items %}
+  </div>
+{% endblock %}

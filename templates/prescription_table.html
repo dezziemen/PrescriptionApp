@@ -17,10 +17,10 @@
 {#        <td><a href="{% url link pk=item.id %}">{{ item }}</a></td>#}
 {#        <td><a href="{% url link pk=item.id %}">{{ item }}</a></td>#}
 {#        <td><a href="{% url link pk=item.id %}">{{ item }}</a></td>#}
-        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.date }}</a></td>
-        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.doctor }}</a></td>
-        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.pharmacist }}</a></td>
-        <td><a href="{% url link pk=pk med_pk=item.id %}">{{ item.collected }}</a></td>
+        <td><a href="{% url link pk=pk prescription_id=item.id %}">{{ item.date }}</a></td>
+        <td><a href="{% url link pk=pk prescription_id=item.id %}">{{ item.doctor }}</a></td>
+        <td><a href="{% url link pk=pk prescription_id=item.id %}">{{ item.pharmacist }}</a></td>
+        <td><a href="{% url link pk=pk prescription_id=item.id %}">{{ item.collected }}</a></td>
       </tr>
     {% endfor %}
   </table>
